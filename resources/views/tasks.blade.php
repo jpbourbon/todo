@@ -35,17 +35,26 @@
                         </span>
                         <h5><input type="checkbox" aria-label="..." aria-describedby="priority" id="taskPriority"></h5>
                     </div>
-                    <br>
-                    <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" class="btn btn-primary" aria-label="Left Align" id="submitTask" disabled>
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                            save
-                        </button>
-                        <button type="button" class="btn btn-danger" aria-label="Left Align" id="cancelTask">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            cancel
-                        </button>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="expiration">
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                        </span>
+                        <h5><input type="checkbox" aria-label="..." aria-describedby="expiration" id="taskExpiration"></h5>
                     </div>
+                    <div class="input-group" id="taskDatetime" style="display:none">
+                        <span class="input-group-addon" id="datetime">Expires</span>
+                        <input type="date" class="form-control" aria-describedby="datetime" id="taskDate">
+                        <input type="time" class="form-control" aria-describedby="datetime" id="taskTime">
+                    </div>
+                    <br>
+                    <button type="button" class="btn btn-primary" aria-label="Left Align" id="submitTask" disabled>
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            save
+                    </button>
+                    <button type="button" class="btn btn-danger pull-right" aria-label="Right< Align" id="cancelTask">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            cancel
+                    </button>
                 </div>
             </div>
             <br>
@@ -125,6 +134,13 @@
                 if ($('#taskPriority').prop('checked')) {
                     data.priority = 1;
                 }
+                if($('#taskDate').val() != '') {
+                    data.date = $('#taskDate').val();
+                }
+                if($('#taskTime').val() != '') {
+                    data.time = $('#taskTime').val();
+                }
+
                 data._token = $('meta[name="csrf-token"]').attr('content');
 
                 var verb = 'create';
@@ -150,6 +166,10 @@
                 $('#taskTitle').val('');
                 $('#taskSummary').val('');
                 $('#taskPriority').removeAttr('checked');
+                $('#taskExpiration').removeAttr('checked');
+                $('#taskDate').val('');
+                $('#taskTime').val('');
+                $('#taskDatetime').hide();
                 $('#submitTask').prop('disabled', true);
                 $('#taskForm').removeAttr('task-id');
                 $('#taskForm').removeAttr('createTask');
@@ -229,6 +249,19 @@
                             },
                             dataType: 'JSON'
                         });
+                    }
+                });
+                // Check / uncheck Expiration
+                $('#taskExpiration').change(function(){
+                    if ($(this).prop('checked')) {
+                        if ($('#taskDate').val() == '') {
+                            var rightNow = new Date();
+                            var res = rightNow.toISOString().slice(0,10);//.replace(/-/g,"");
+                            $('#taskDate').val(res);
+                        }
+                        $('#taskDatetime').slideDown();
+                    } else {
+                        $('#taskDatetime').slideUp();
                     }
                 });
             }
