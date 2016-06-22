@@ -104,6 +104,18 @@ class TaskController extends Controller
                 $object->completed = false;
             }
         }
+        if ($request::has('date')) {
+            if ($request::has('time')) {
+                $object->expires_at = $request::input('date').' '.Request::input('time').':00';
+            } else {
+                $object->expires_at = $request::input('date').' 00:00:00';
+            }
+        }
+        if ($request::has('time')) {
+            if (!$request::has('date')) {
+                $object->expires_at = date('Y-m-d').' '.$request::input('time').':00';
+            }
+        }
 
         return $object;
     }

@@ -77,7 +77,14 @@
                             @endif
                             </button>
                         </div>
-                        <div class="col-sm-8 vertical-center">
+                        <div class="col-sm-1">
+                        @if ($task['expires_at'] != '')
+                            <button type="button" class="btn btn-default taskExpiration" aria-label="Left Align"  @if ($task['completed'] == 1) disabled @endif datetime="{{ $task['expires_at'] }}">
+                                <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                            </button>
+                        @endif
+                        </div>
+                        <div class="col-sm-7 vertical-center">
                             <h5><span class="taskTitle">{{ $task['title'] }}</span> <span class="taskSummary" style="font-style: italic">{{ $task['summary'] }}</span></h5>
                         </div>
                         <div class="col-sm-2">
@@ -190,6 +197,19 @@
                     } else {
                         $('#taskPriority').attr('checked', false);
                     }
+                    if (row.find('.taskExpiration').length > 0) {
+                        var datetime = row.find('.taskExpiration').attr('datetime');
+                        $('#taskExpiration').click();
+                        $('#taskDate').val(datetime.slice(0,10));
+                        $('#taskTime').val(datetime.slice(11));
+                    } else {
+                        if ($('#taskExpiration').prop('checked')) {
+                            $('#taskExpiration').removeAttr('checked');
+                            $('#taskDate').val('');
+                            $('#taskTime').val('');
+                            $('#taskDatetime').hide();
+                        }
+                    }
                     $('#submitTask').prop('disabled', false);
                 });
 
@@ -263,6 +283,10 @@
                     } else {
                         $('#taskDatetime').slideUp();
                     }
+                });
+                // Expiration button
+                $('.taskExpiration').click(function() {
+                    alert($(this).attr('datetime'));
                 });
             }
             events();
